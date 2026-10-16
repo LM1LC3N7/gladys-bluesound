@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-16
+
 ### Added
 
 - One device per player that works with BluOS (Bluesound, NAD…), found in
@@ -35,4 +37,5 @@ the notes of the version's GitHub Release.
   sound or a stream", "join a group", "leave its group" and "now playing".
 - "Test the players" and "List the sources and presets" buttons.
 
-[Unreleased]: https://github.com/LM1LC3N7/gladys-bluesound/commits/main
+[Unreleased]: https://github.com/LM1LC3N7/gladys-bluesound/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/LM1LC3N7/gladys-bluesound/releases/tag/v0.1.1
