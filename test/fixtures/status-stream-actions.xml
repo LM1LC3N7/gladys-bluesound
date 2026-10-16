@@ -1,0 +1,27 @@
+<status etag="77aa21c9e0f84b5d6c3e2f1a0b9c8d7e">
+<actions>
+<action name="back"/>
+<action name="skip" url="/Action?service=RadioParadise&amp;skip=8327661"/>
+<action icon="/images/loveban/love.png" name="love" notification="Track marked as favorite" state="-1" text="Love" url="/Action?service=RadioParadise&amp;love=8327661"/>
+</actions>
+<canMovePlayback>true</canMovePlayback>
+<canSeek>0</canSeek>
+<image>https://img.radioparadise.com/covers/l/B000002UJQ.jpg</image>
+<mute>0</mute>
+<pid>1057</pid>
+<prid>4</prid>
+<quality>hd</quality>
+<service>RadioParadise</service>
+<state>stream</state>
+<streamFormat>FLAC 44.1/16</streamFormat>
+<streamUrl>RadioParadise:/0:4</streamUrl>
+<syncStat>9</syncStat>
+<title1>Teardrop</title1>
+<title2>Massive Attack</title2>
+<title3>Mezzanine</title3>
+<artist>Massive Attack</artist>
+<album>Mezzanine</album>
+<name>Teardrop</name>
+<volume>30</volume>
+<secs>12</secs>
+</status>

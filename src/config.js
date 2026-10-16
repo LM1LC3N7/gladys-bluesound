@@ -1,45 +1,85 @@
 // -----------------------------------------------------------------------------
-// Integration configuration.
-//
-// The configuration is filled in by the user in Gladys, from the `config_schema`
-// declared in `gladys-assistant-integration.json`. The SDK fetches it for you
-// (`gladys.getConfig()`) and notifies you of every change through
-// `gladys.onConfigUpdated()`.
-//
-// This module only provides defaults and normalizes the received object, so the
-// rest of the code never has to deal with `undefined`.
+// The configuration the user fills (manifest `config_schema`), normalized.
 // -----------------------------------------------------------------------------
 
-// Defaults: they MUST stay consistent with the `default` values declared in the
-// `config_schema` of the manifest.
-export const DEFAULT_CONFIG = {
-  latitude: 48.8566, // Paris
-  longitude: 2.3522,
-  unit: 'celsius', // 'celsius' | 'fahrenheit'
-  // Seconds between two reads of the polled sensors. Gladys polls at most once
-  // a minute: slower intervals are applied by skipping polls (see
-  // createPoller in src/devices/index.js).
-  poll_frequency: 300,
-  // Reserved key (NOT in config_schema): because the manifest declares both
-  // 'local' and 'cloud' in its `transports` field, Gladys shows a standard
-  // "Prefer the local connection" toggle and sends the user's choice here.
-  // Read-only for the integration; defaults to true.
-  GLADYS_PREFER_LOCAL: true,
+import { DEFAULT_PORT, MAX_HOSTS } from './constants.js';
+
+// Defaults: they MUST match the `default` values of the manifest.
+export const DEFAULTS = {
+  hosts: '',
+  notification_volume: 0,
+};
+
+export const BOUNDS = { notification_volume: { min: 0, max: 100 } };
+
+const number = (value, fallback, { min, max }) => {
+  const n = Number(value);
+  return value !== '' && value !== null && Number.isFinite(n)
+    ? Math.min(max, Math.max(min, Math.round(n)))
+    : fallback;
 };
 
 /**
- * Merge the user config with the defaults.
- * @param {Record<string, unknown>} raw config returned by the SDK
+ * The `hosts` field: addresses separated by commas, spaces or new lines,
+ * each a host name or an IP with an optional port ("192.168.1.20",
+ * "salon.lan:11000", "192.168.1.30:11010" for a second zone). An entry with
+ * a path, credentials or another scheme than http is refused (reported by
+ * its position only).
+ *   -> { hosts: [{ host, port }], invalid: [positions] }
  */
+export function parseHosts(text) {
+  const hosts = [];
+  const invalid = [];
+  const seen = new Set();
+  const entries = String(text ?? '')
+    .split(/[\s,;]+/)
+    .filter(Boolean);
+  entries.forEach((entry, index) => {
+    let url;
+    // "/path" would read as the host "path" (http:///path).
+    if (entry.startsWith('/')) {
+      invalid.push(index + 1);
+      return;
+    }
+    try {
+      url = new URL(/^[a-z]+:\/\//i.test(entry) ? entry : `http://${entry}`);
+    } catch {
+      invalid.push(index + 1);
+      return;
+    }
+    if (
+      url.protocol !== 'http:' ||
+      url.username ||
+      url.password ||
+      (url.pathname !== '/' && url.pathname !== '') ||
+      url.search ||
+      url.hash ||
+      !url.hostname
+    ) {
+      invalid.push(index + 1);
+      return;
+    }
+    const host = url.hostname.replace(/^\[|\]$/g, '');
+    // new URL() drops the default port 80: an explicit ":80" is a mistake for a player.
+    const port = url.port ? Number(url.port) : /:80$/.test(entry) ? 80 : DEFAULT_PORT;
+    const key = `${host.toLowerCase()}:${port}`;
+    if (!seen.has(key) && hosts.length < MAX_HOSTS) {
+      seen.add(key);
+      hosts.push({ host, port });
+    }
+  });
+  return { hosts, invalid };
+}
+
 export function normalizeConfig(raw = {}) {
+  const { hosts, invalid } = parseHosts(raw.hosts ?? DEFAULTS.hosts);
   return {
-    ...DEFAULT_CONFIG,
-    ...raw,
-    // Force the types: config may arrive as strings from a form.
-    latitude: Number(raw.latitude ?? DEFAULT_CONFIG.latitude),
-    longitude: Number(raw.longitude ?? DEFAULT_CONFIG.longitude),
-    poll_frequency: Number(raw.poll_frequency ?? DEFAULT_CONFIG.poll_frequency),
-    // The preference is a boolean; anything but an explicit false means true.
-    GLADYS_PREFER_LOCAL: raw.GLADYS_PREFER_LOCAL !== false,
+    hosts,
+    invalidHosts: invalid,
+    notificationVolume: number(
+      raw.notification_volume,
+      DEFAULTS.notification_volume,
+      BOUNDS.notification_volume,
+    ),
   };
 }

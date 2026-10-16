@@ -1,0 +1,34 @@
+<status etag="b7e1f04c22d9a8a3c6f5e4d3c2b1a090">
+<canMovePlayback>true</canMovePlayback>
+<canSeek>0</canSeek>
+<cursor>162</cursor>
+<db>-41.5</db>
+<fn>TuneIn:s15200/http://opml.radiotime.com/Tune.ashx?id=s15200&amp;formats=wma,mp3,aac,ogg,hls&amp;partnerId=8OeGua6y</fn>
+<image>http://cdn-profiles.tunein.com/s15200/images/logoq.png</image>
+<indexing>0</indexing>
+<mid>191</mid>
+<mode>1</mode>
+<mute>0</mute>
+<pid>1057</pid>
+<prid>4</prid>
+<quality>128000</quality>
+<repeat>2</repeat>
+<service>TuneIn</service>
+<serviceIcon>/Sources/images/TuneInIcon.png</serviceIcon>
+<shuffle>0</shuffle>
+<sid>9</sid>
+<sleep/>
+<song>3</song>
+<state>stream</state>
+<stationImage>http://cdn-profiles.tunein.com/s15200/images/logoq.png</stationImage>
+<streamFormat>AAC 128 kb/s</streamFormat>
+<streamUrl>TuneIn:s15200/http://opml.radiotime.com/Tune.ashx?id=s15200&amp;formats=wma,mp3,aac,ogg,hls&amp;partnerId=8OeGua6y</streamUrl>
+<syncStat>9</syncStat>
+<title1>FIP</title1>
+<title2>Herbie Hancock - Watermelon Man</title2>
+<title3>FIP</title3>
+<twoline_title1>Herbie Hancock - Watermelon Man</twoline_title1>
+<twoline_title2>FIP</twoline_title2>
+<volume>41</volume>
+<secs>1260</secs>
+</status>

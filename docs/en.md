@@ -1,61 +1,130 @@
-# Demo Devices Template
+# Players that work with BluOS
 
-This is the user documentation of the integration. Gladys re-hosts this file
-and shows a permanent **Documentation** link to it in the Configuration screen
-(in the user's language, with English as the fallback) — it is when
-configuring that the user needs it most. Keep the short onboarding hints in
-the `section` blocks of the manifest `config_schema`; put the long
-step-by-step (screenshots, troubleshooting…) here.
+**Unofficial connector, not affiliated with Lenbrook (Bluesound, NAD) nor
+with the other brands.** It brings into Gladys the network players that work
+with **BluOS**: Bluesound Node, Powernode, Pulse, Flex, soundbars, NAD
+streamers and amplifiers (C658, M10, CI580…), and the other devices the
+BluOS Controller app drives. Everything goes through the local API of the
+players, on your network: no account, no cloud.
+
+**Testers wanted**: this first version was written without a player at hand,
+from the official BluOS API documentation, the library of the Home Assistant
+integration and answers recorded on real NAD and Bluesound players. It was
+tested against simulated players. Tell us on the forum what works on your
+model, and what does not.
 
 ## What you get
 
-Six demo devices show up after installation: a weather station (real data
-from Open-Meteo), a switch, a dimmable light, a smart plug with power
-metering, a motion sensor and a camera.
+| Surface                      | Content                                                                                                                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| One device per **player**    | play, pause, previous, next, volume (0-100), playback state, mute, source (the inputs and presets of the player), title, artist, album, group, and the "notification" function of Gladys speakers |
+| Scene triggers               | **playback changed** (playing, paused, stopped), **source changed** (input, preset or service; filter by input type: optical, HDMI ARC, Bluetooth…), **new track**                                |
+| Scene actions                | **playback** (play, pause, play/pause, stop, next, previous), **play a preset**, **change the source**, **play a sound or a stream**, **join a group**, **leave its group**, **now playing**      |
+| Buttons of the configuration | **Test the players**, **List the sources and presets** of a player                                                                                                                                |
 
-## Configuration
+The players are followed **live**: Gladys keeps one request open on each
+player (the "long polling" of the BluOS API), which answers as soon as
+something changes. A change made in the BluOS app, with the remote or on the
+player reaches Gladys within a second, without asking the player in a loop.
 
-1. Open the **Configuration** tab of the integration.
-2. Set the **latitude** and **longitude** the demo weather station should
-   observe (they default to Paris), and pick your temperature unit.
-   The **refresh interval** sets how often the weather station and the
-   plug's power are read: every 5 minutes by default, every minute at most.
-3. Save: the devices appear in the **Discovery** tab, ready to be added.
+## Getting started
 
-The **Prefer the local connection** toggle drives the demo plug: it reports
-the channel it actually uses as a badge (local or cloud), with an orange dot
-when it runs degraded (local refused, cloud fallback).
+1. Install the integration and open **Discovery**: the players answering on
+   your network are listed (Gladys looks for them over mDNS, like the BluOS
+   app). Add yours.
+2. A player is missing? Its address goes in **Player addresses** (an IP or a
+   host name, several separated by commas), then scan again. The port is
+   11000; zones 2, 3 and 4 of a multi-zone player (NAD CI580) are
+   `address:11010`, `:11020`, `:11030`. Give your players a fixed address in
+   your router: a player that changed address is found again by a new
+   Discovery scan.
+3. On a dashboard, the **Music** box of Gladys drives a player (play, pause,
+   next, previous, volume), like a Sonos.
 
-## Actions
+## Gladys notifications
 
-- **Test the weather provider** — performs a live request to Open-Meteo and
-  shows the current temperature and humidity under the button.
-- **Identify a device** — pick one of your devices in the list and it will
-  signal itself (the demo light "blinks" in the logs).
+The **Play a notification** scene action of Gladys (the text to speech,
+through Gladys Plus) works on a BluOS player: pick it in the list. The
+player plays the message, then **resumes what it played** where the API
+allows it:
+
+- the play queue resumes at the track and second it was at;
+- an input (optical, HDMI ARC, Bluetooth…) is selected again;
+- a radio of your **presets** is played again.
+
+A radio outside the presets, Spotify Connect or AirPlay cannot be restarted
+through the API: the player then stays stopped after the message. If you
+change the source yourself during the message, nothing is resumed.
+
+Gladys does not pass the volume chosen in that action to external
+integrations yet: set **Announcement volume** in the configuration instead
+(0 = current volume unchanged); the previous volume comes back after the
+message. A player in a group plays the message on the whole group.
 
 ## Scenes
 
-The integration adds its own cards to the scene editor (Gladys 5.1 or
-later), under the **Integrations** category:
+- **Playback changed**: a player (or none for any), and optionally the new
+  state (`playing`, `paused`, `stopped`). Variables: the player name, the
+  new state and the previous one, the source, the title, the artist, the
+  album and a one-line summary.
+- **Source changed**: filters on the kind of source (an input, a preset, a
+  streaming service) and on the input type (optical, analog, coaxial,
+  Bluetooth, HDMI ARC / eARC, phono…). For example: "when the TV switches to
+  the HDMI ARC input, dim the lights".
+- **New track**: what a playing player plays changed on the same source.
+- **Playback**: play, pause, play/pause, stop, next or previous track. On a
+  radio, "next" only works if the service allows it (Radio Paradise,
+  Slacker…).
+- **Play a preset**: its number (`3`) or its name (`FIP`).
+- **Change the source**: the name of an input (`HDMI ARC`), an everyday word
+  (`optical`, `TV`, `HDMI`, `Bluetooth`, `analog`, `aux`, `phono`, `vinyl`,
+  `optical 2` for the second one) or a preset (number or name). The **List
+  the sources and presets** button shows what a player offers.
+- **Play a sound or a stream**: an `http://` or `https://` address (a chime
+  on your NAS, a web radio), an optional volume, and **Then resume** as for
+  the notifications.
+- **Join a group** / **Leave its group**: the player to add and the primary
+  player of the group; a primary player leaving its group leaves the others
+  grouped together.
+- **Now playing** gives `online`, `playing`, `state`, `title`, `artist`,
+  `album`, `summary`, `source`, `volume`, `muted`, `group` for a message or a
+  condition. The following actions of the scene find them in their variable
+  list (written `{{<step>.<action>.<key>}}`, e.g. `{{0.0.summary}}` when
+  this action is the first of the scene).
 
-- **Motion detected** (trigger) — starts the scene when a demo motion sensor
-  sees something move. Optionally pick the sensor and what moved (person,
-  animal); left empty, any detection matches. The following actions can
-  read what moved with `{{triggerEvent.data.target}}`.
-- **Identify a device** (action) — makes the chosen device signal itself.
-  It returns whether the device could signal itself, so the following
-  actions can depend on it.
+Changes made through Gladys (a command, a scene, a notification) fire none
+of the integration's triggers: a scene can never loop through the player.
+The generic **Control a device** action also drives playback, volume and
+source. **Mute** is shown by Gladys as a button: each press mutes or unmutes.
 
-## Dashboard
+## Good to know
 
-Add the **Demo status** widget to a dashboard: it shows the live
-temperature of the weather station and the power of the office plug, the
-connection the plug currently uses (orange when degraded) and the observed
-location. Its **Identify the light** button makes the demo light signal
-itself.
+- The volume of a device is the volume of that player alone, even when it
+  leads a group (like a room); a player with a fixed volume (set in the BluOS
+  app) has no volume in Gladys.
+- The secondary player of a group plays what the primary plays: its title,
+  source and state are the group's.
+- Gladys sends at most three requests at once to a player (its two follow-up
+  requests and one command), and never the same one twice within a second,
+  as the BluOS API requires.
+- The source list follows when you change the presets in the BluOS app (a
+  few seconds later).
 
 ## Troubleshooting
 
-The integration logs everything it does: check the integration logs from the
-Gladys UI (or `docker logs` on the host) with `LOG_LEVEL=debug` for the full
-detail.
+- **No player in Discovery**: the scan needs a network that lets multicast
+  through (no VLAN between Gladys and the player); type the address of the
+  player in the configuration instead. Check that it answers: **Test the
+  players**.
+- **Offline**: the player is unplugged, out of reach or has a new address.
+  Gladys retries by itself (5 s, 10 s, 20 s… then every two minutes); if it
+  has a new address, scan again in Discovery.
+- **"cannot skip tracks"**: the current radio or input has no next track.
+- Logs: the log level of the integration is set with the `LOG_LEVEL`
+  variable.
+
+## Privacy
+
+The integration only talks to your players, on your local network, without
+any account. The addresses played (notifications, sounds, streams) are
+downloaded by the player itself.

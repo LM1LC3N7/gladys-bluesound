@@ -1,0 +1,6 @@
+<presets prid="4">
+<preset id="1" name="FIP" url="TuneIn:s15200/http://opml.radiotime.com/Tune.ashx?id=s15200&amp;formats=wma,mp3,aac,ogg,hls&amp;partnerId=8OeGua6y" image="http://cdn-profiles.tunein.com/s15200/images/logoq.png"/>
+<preset id="2" name="Radio Paradise Main Mix" url="RadioParadise:/0:4" image="https://img.radioparadise.com/channels/0/0/cover_512x512/0.jpg"/>
+<preset id="5" name="Jazz du dimanche" url="/Load?service=Qobuz&amp;id=4512870" image="/Artwork?service=Qobuz&amp;playlistimage=4512870"/>
+<preset id="7" name="Platine vinyle" url="Capture:plughw:imxnadadc,0/48000/24/2?id=input0" image="/images/capture/ic_vinyl.png"/>
+</presets>

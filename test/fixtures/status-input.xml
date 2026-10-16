@@ -1,0 +1,31 @@
+<status etag="0c4b8e6f13a7d2e5c9f8a1b2c3d4e5f6">
+<canMovePlayback>true</canMovePlayback>
+<canSeek>0</canSeek>
+<db>-35</db>
+<fn>Capture:hw:imxspdif,0/1/25/2?id=input1</fn>
+<image>/images/capture/ic_opticalinput.png</image>
+<indexing>0</indexing>
+<inputId>input1</inputId>
+<mid>191</mid>
+<mode>1</mode>
+<mute>0</mute>
+<pid>1057</pid>
+<prid>4</prid>
+<quality>cd</quality>
+<repeat>2</repeat>
+<service>Capture</service>
+<serviceIcon>/images/capture/ic_opticalinput.png</serviceIcon>
+<shuffle>0</shuffle>
+<sid>9</sid>
+<sleep/>
+<song>3</song>
+<state>stream</state>
+<streamFormat>PCM 48/24</streamFormat>
+<streamUrl>Capture:hw:imxspdif,0/1/25/2?id=input1</streamUrl>
+<syncStat>9</syncStat>
+<title1>Optical Input</title1>
+<title2></title2>
+<title3></title3>
+<volume>48</volume>
+<secs>310</secs>
+</status>

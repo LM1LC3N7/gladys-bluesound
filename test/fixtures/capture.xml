@@ -1,0 +1,10 @@
+<radiotime service="Capture">
+<item playerName="Salon" text="Bluetooth" inputType="bluetooth" id="input2" URL="Capture%3Abluez%3Abluetooth" image="/images/BluetoothIcon.png" type="audio"/>
+<item playerName="Salon" text="Analog Input" inputType="analog" id="input0" URL="Capture%3Aplughw%3Aimxnadadc%2C0%2F48000%2F24%2F2%3Fid%3Dinput0" image="/images/capture/ic_analoginput.png" type="audio"/>
+<item playerName="Salon" text="Optical Input" inputType="spdif" id="input1" URL="Capture%3Ahw%3Aimxspdif%2C0%2F1%2F25%2F2%3Fid%3Dinput1" image="/images/capture/ic_opticalinput.png" type="audio"/>
+<item playerName="Salon" text="HDMI ARC" inputType="arc" id="input3" URL="Capture%3Ahw%3Aimxarc%2C0%2F1%2F25%2F2%3Fid%3Dinput3" image="/images/capture/ic_tv.png" type="audio"/>
+<item playerName="Salon" text="Spotify" id="Spotify" URL="Spotify%3Aplay" image="/Sources/images/SpotifyIcon.png" serviceType="CloudService" type="audio"/>
+<category icon="/images/CB130Icon.png" text="Hub Bureau">
+<remoteitem playerName="Hub Bureau" text="Phono Input" inputType="phono" id="hub-192168414911000-input1" URL="Hub%3A%2F%2F192.168.4.149%3A11000%2Finput1" image="/images/capture/ic_vinyl.png" type="audio"/>
+</category>
+</radiotime>

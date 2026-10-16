@@ -1,177 +1,577 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Players (works with BluOS)",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Unofficial connector: Bluesound, NAD… players that work with BluOS, on the local network.",
+    "fr": "Connecteur non officiel : lecteurs Bluesound, NAD… compatibles BluOS, en réseau local."
   },
-  "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "version": "0.1.0",
+  "docker_image": "ghcr.io/lm1lc3n7/gladys-bluesound:0.1.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "cover_image": "https://raw.githubusercontent.com/LM1LC3N7/gladys-bluesound/main/cover.png",
+  "categories": ["multimedia"],
+  "transports": ["local"],
+  "network_discovery": [
+    { "type": "mdns", "service": "_musc._tcp" },
+    { "type": "mdns", "service": "_musp._tcp" }
+  ],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "BluOS players in Gladys",
+        "fr": "Les lecteurs BluOS dans Gladys"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "Unofficial connector, not affiliated with Lenbrook (Bluesound, NAD) nor with the other brands. It drives the players that work with BluOS (Bluesound Node, Powernode, Pulse, NAD streamers and amplifiers…) on the local network through their BluOS API, without any account: playback, volume, mute, source, presets, now playing, groups and announcements, followed live, with scene triggers and actions. Open Discovery: the players answering on the network are found automatically; type the address of the others below.",
+        "fr": "Connecteur non officiel, sans lien avec Lenbrook (Bluesound, NAD) ni avec les autres marques. Il pilote les lecteurs compatibles BluOS (Bluesound Node, Powernode, Pulse, streamers et amplis NAD…) en réseau local par leur API BluOS, sans compte : lecture, volume, sourdine, source, préréglages, lecture en cours, groupes et annonces, suivis en direct, avec des déclencheurs et des actions de scène. Ouvrez Découverte : les lecteurs qui répondent sur le réseau sont trouvés automatiquement ; saisissez ci-dessous l'adresse des autres."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://github.com/LM1LC3N7/gladys-bluesound/blob/main/docs/fr.md",
+          "label": { "en": "Guide (French)", "fr": "Guide (français)" }
+        },
+        {
+          "url": "https://github.com/LM1LC3N7/gladys-bluesound/blob/main/docs/en.md",
+          "label": { "en": "Guide (English)", "fr": "Guide (anglais)" }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "hosts",
+      "type": "string",
+      "label": {
+        "en": "Player addresses (if not found automatically)",
+        "fr": "Adresses des lecteurs (s'ils ne sont pas trouvés)"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
-    },
-    {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
       "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
-      },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
-    },
-    {
-      "key": "unit",
-      "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
-      "required": false,
-      "default": "celsius",
-      "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
-      ]
-    },
-    {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
-      "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "IP addresses or host names, separated by commas, with an optional :port (11000 by default; 11010, 11020, 11030 for the other zones of a multi-zone player). Only needed for the players Discovery does not find (another network, multicast blocked). Give them a fixed address in your router.",
+        "fr": "Adresses IP ou noms d'hôte, séparés par des virgules, avec un :port facultatif (11000 par défaut ; 11010, 11020, 11030 pour les autres zones d'un lecteur multizone). Utile seulement pour les lecteurs que Découverte ne trouve pas (autre réseau, multicast bloqué). Donnez-leur une adresse fixe dans votre box."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": "",
+      "placeholder": { "en": "192.168.1.20, 192.168.1.21", "fr": "192.168.1.20, 192.168.1.21" }
+    },
+    {
+      "key": "notification_volume",
+      "type": "number",
+      "label": {
+        "en": "Announcement volume (0: unchanged)",
+        "fr": "Volume des annonces (0 : inchangé)"
+      },
+      "description": {
+        "en": "The volume (0-100) of the \"Play a notification\" scene action of Gladys on a BluOS player, put back afterwards. 0 keeps the current volume.",
+        "fr": "Le volume (0-100) de l'action de scène « Jouer une notification » de Gladys sur un lecteur BluOS, remis ensuite. 0 garde le volume actuel."
+      },
+      "required": false,
+      "default": 0,
+      "min": 0,
+      "max": 100
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
+      "key": "test_connection",
+      "timeout_seconds": 60,
+      "label": { "en": "Test the players", "fr": "Tester les lecteurs" },
+      "description": {
+        "en": "Reads every player added to Gladys and every address typed above.",
+        "fr": "Lit chaque lecteur ajouté à Gladys et chaque adresse saisie ci-dessus."
+      }
     },
     {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
+      "key": "list_sources",
+      "timeout_seconds": 30,
+      "label": { "en": "List the sources and presets", "fr": "Lister les sources et préréglages" },
+      "description": {
+        "en": "The inputs and the presets of a player, with their numbers and names (for the scene actions).",
+        "fr": "Les entrées et les préréglages d'un lecteur, avec leurs numéros et noms (pour les actions de scène)."
+      },
       "fields": [
         {
-          "key": "device",
+          "key": "player",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
+          "required": true,
+          "label": { "en": "Player", "fr": "Lecteur" }
         }
       ]
     }
   ],
   "scene_triggers": [
     {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "playback_changed",
+      "label": {
+        "en": "BluOS player: playback changed",
+        "fr": "Lecteur BluOS : la lecture a changé"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "A player started playing, paused or stopped. Changes made through Gladys do not fire it.",
+        "fr": "Un lecteur s'est mis à jouer, en pause ou s'est arrêté. Les changements faits depuis Gladys ne le déclenchent pas."
       },
       "fields": [
         {
-          "key": "device",
+          "key": "player",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
+          "required": false,
+          "label": { "en": "Player (empty: any)", "fr": "Lecteur (vide : tous)" }
         },
         {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
+          "key": "state",
+          "type": "select",
+          "required": false,
+          "label": { "en": "New state (empty: any)", "fr": "Nouvel état (vide : tous)" },
           "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
+            { "value": "playing", "label": { "en": "Playing", "fr": "En lecture" } },
+            { "value": "paused", "label": { "en": "Paused", "fr": "En pause" } },
+            { "value": "stopped", "label": { "en": "Stopped", "fr": "Arrêté" } }
           ]
         }
       ],
       "variables": [
         {
-          "key": "target",
+          "key": "player_name",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": { "en": "Player name", "fr": "Nom du lecteur" }
+        },
+        {
+          "key": "state",
+          "type": "string",
+          "label": {
+            "en": "New state (playing, paused, stopped)",
+            "fr": "Nouvel état (playing, paused, stopped)"
+          }
+        },
+        {
+          "key": "previous_state",
+          "type": "string",
+          "label": { "en": "Previous state", "fr": "État précédent" }
+        },
+        { "key": "source", "type": "string", "label": { "en": "Source", "fr": "Source" } },
+        { "key": "title", "type": "string", "label": { "en": "Title", "fr": "Titre" } },
+        { "key": "artist", "type": "string", "label": { "en": "Artist", "fr": "Artiste" } },
+        { "key": "album", "type": "string", "label": { "en": "Album", "fr": "Album" } },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": { "en": "Now playing, one line", "fr": "Lecture en cours, une ligne" }
+        }
+      ]
+    },
+    {
+      "key": "source_changed",
+      "label": {
+        "en": "BluOS player: source changed",
+        "fr": "Lecteur BluOS : la source a changé"
+      },
+      "description": {
+        "en": "A player switched to another input, preset or streaming service. Changes made through Gladys do not fire it.",
+        "fr": "Un lecteur est passé sur une autre entrée, un autre préréglage ou un autre service de streaming. Les changements faits depuis Gladys ne le déclenchent pas."
+      },
+      "fields": [
+        {
+          "key": "player",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": { "en": "Player (empty: any)", "fr": "Lecteur (vide : tous)" }
+        },
+        {
+          "key": "kind",
+          "type": "select",
+          "required": false,
+          "label": { "en": "Kind of source (empty: any)", "fr": "Type de source (vide : tous)" },
+          "options": [
+            { "value": "input", "label": { "en": "An input", "fr": "Une entrée" } },
+            { "value": "preset", "label": { "en": "A preset", "fr": "Un préréglage" } },
+            {
+              "value": "service",
+              "label": { "en": "A streaming service", "fr": "Un service de streaming" }
+            }
+          ]
+        },
+        {
+          "key": "input_type",
+          "type": "select",
+          "required": false,
+          "label": { "en": "Input (empty: any)", "fr": "Entrée (vide : toutes)" },
+          "options": [
+            { "value": "spdif", "label": { "en": "Optical", "fr": "Optique" } },
+            {
+              "value": "analog",
+              "label": { "en": "Analog / line in", "fr": "Analogique / ligne" }
+            },
+            { "value": "coax", "label": { "en": "Coaxial", "fr": "Coaxiale" } },
+            { "value": "bluetooth", "label": { "en": "Bluetooth", "fr": "Bluetooth" } },
+            { "value": "arc", "label": { "en": "HDMI ARC (TV)", "fr": "HDMI ARC (TV)" } },
+            { "value": "earc", "label": { "en": "HDMI eARC (TV)", "fr": "HDMI eARC (TV)" } },
+            { "value": "phono", "label": { "en": "Phono (turntable)", "fr": "Phono (platine)" } },
+            { "value": "computer", "label": { "en": "Computer (USB)", "fr": "Ordinateur (USB)" } },
+            { "value": "aesebu", "label": { "en": "AES/EBU", "fr": "AES/EBU" } },
+            { "value": "balanced", "label": { "en": "Balanced (XLR)", "fr": "Symétrique (XLR)" } },
+            { "value": "microphone", "label": { "en": "Microphone", "fr": "Microphone" } }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "player_name",
+          "type": "string",
+          "label": { "en": "Player name", "fr": "Nom du lecteur" }
+        },
+        {
+          "key": "source",
+          "type": "string",
+          "label": { "en": "New source", "fr": "Nouvelle source" }
+        },
+        {
+          "key": "previous_source",
+          "type": "string",
+          "label": { "en": "Previous source", "fr": "Source précédente" }
+        },
+        {
+          "key": "kind",
+          "type": "string",
+          "label": {
+            "en": "Kind (input, preset, service)",
+            "fr": "Type (input, preset, service)"
+          }
+        },
+        {
+          "key": "input_type",
+          "type": "string",
+          "label": { "en": "Input type (spdif, arc…)", "fr": "Type d'entrée (spdif, arc…)" }
+        },
+        { "key": "title", "type": "string", "label": { "en": "Title", "fr": "Titre" } },
+        { "key": "artist", "type": "string", "label": { "en": "Artist", "fr": "Artiste" } },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": { "en": "Now playing, one line", "fr": "Lecture en cours, une ligne" }
+        }
+      ]
+    },
+    {
+      "key": "track_changed",
+      "label": {
+        "en": "BluOS player: new track",
+        "fr": "Lecteur BluOS : nouveau morceau"
+      },
+      "description": {
+        "en": "What a playing player plays changed on the same source (next track, new song on a radio).",
+        "fr": "Ce que joue un lecteur a changé sur la même source (morceau suivant, nouveau titre sur une radio)."
+      },
+      "fields": [
+        {
+          "key": "player",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": { "en": "Player (empty: any)", "fr": "Lecteur (vide : tous)" }
+        }
+      ],
+      "variables": [
+        {
+          "key": "player_name",
+          "type": "string",
+          "label": { "en": "Player name", "fr": "Nom du lecteur" }
+        },
+        { "key": "title", "type": "string", "label": { "en": "Title", "fr": "Titre" } },
+        { "key": "artist", "type": "string", "label": { "en": "Artist", "fr": "Artiste" } },
+        { "key": "album", "type": "string", "label": { "en": "Album", "fr": "Album" } },
+        { "key": "source", "type": "string", "label": { "en": "Source", "fr": "Source" } },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": { "en": "Now playing, one line", "fr": "Lecture en cours, une ligne" }
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
+      "key": "playback",
+      "label": { "en": "BluOS player: playback", "fr": "Lecteur BluOS : lecture" },
       "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+        "en": "Play, pause, play/pause, stop, next or previous track.",
+        "fr": "Lecture, pause, lecture/pause, arrêt, morceau suivant ou précédent."
       },
-      "timeout_seconds": 15,
+      "timeout_seconds": 20,
       "fields": [
         {
-          "key": "device",
+          "key": "player",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
+          "required": true,
+          "label": { "en": "Player", "fr": "Lecteur" }
+        },
+        {
+          "key": "command",
+          "type": "select",
+          "required": true,
+          "label": { "en": "Command", "fr": "Commande" },
+          "options": [
+            { "value": "play", "label": { "en": "Play", "fr": "Lecture" } },
+            { "value": "pause", "label": { "en": "Pause", "fr": "Pause" } },
+            { "value": "toggle", "label": { "en": "Play / pause", "fr": "Lecture / pause" } },
+            { "value": "stop", "label": { "en": "Stop", "fr": "Arrêt" } },
+            { "value": "next", "label": { "en": "Next track", "fr": "Morceau suivant" } },
+            {
+              "value": "previous",
+              "label": { "en": "Previous track", "fr": "Morceau précédent" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "play_preset",
+      "label": { "en": "BluOS player: play a preset", "fr": "Lecteur BluOS : jouer un préréglage" },
+      "description": {
+        "en": "Plays a preset of the player (a radio, a playlist, an input) by its number or its name.",
+        "fr": "Joue un préréglage du lecteur (une radio, une playlist, une entrée) par son numéro ou son nom."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "player",
+          "type": "select",
+          "source": "devices",
+          "required": true,
+          "label": { "en": "Player", "fr": "Lecteur" }
+        },
+        {
+          "key": "preset",
+          "type": "string",
+          "required": true,
+          "label": { "en": "Preset (number or name)", "fr": "Préréglage (numéro ou nom)" },
+          "placeholder": { "en": "3 or FIP", "fr": "3 ou FIP" }
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
-          "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "key": "preset",
+          "type": "number",
+          "label": { "en": "Preset number", "fr": "Numéro du préréglage" }
+        },
+        {
+          "key": "preset_name",
+          "type": "string",
+          "label": { "en": "Preset name", "fr": "Nom du préréglage" }
         }
       ]
-    }
-  ],
-  "widgets": [
+    },
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "select_source",
+      "label": {
+        "en": "BluOS player: change the source",
+        "fr": "Lecteur BluOS : changer de source"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "Switches to an input (its name, or optical, HDMI, TV, Bluetooth, analog, phono…) or a preset (its number or name).",
+        "fr": "Passe sur une entrée (son nom, ou optique, HDMI, TV, Bluetooth, analogique, phono…) ou un préréglage (son numéro ou son nom)."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "player",
+          "type": "select",
+          "source": "devices",
+          "required": true,
+          "label": { "en": "Player", "fr": "Lecteur" }
+        },
+        {
+          "key": "source",
+          "type": "string",
+          "required": true,
+          "label": { "en": "Source", "fr": "Source" },
+          "placeholder": { "en": "HDMI ARC", "fr": "Optique" }
+        }
+      ],
+      "outputs": [
+        { "key": "source", "type": "string", "label": { "en": "Source", "fr": "Source" } },
+        {
+          "key": "kind",
+          "type": "string",
+          "label": { "en": "Kind (input, preset)", "fr": "Type (input, preset)" }
+        }
+      ]
+    },
+    {
+      "key": "play_url",
+      "label": {
+        "en": "BluOS player: play a sound or a stream",
+        "fr": "Lecteur BluOS : jouer un son ou un flux"
+      },
+      "description": {
+        "en": "Plays an audio URL (a chime, a web radio…), at the given volume if any; once it ends, the volume and what played before come back where the player allows it.",
+        "fr": "Joue une adresse audio (un carillon, une webradio…), au volume indiqué s'il y en a un ; à la fin, le volume et ce qui jouait avant reviennent quand le lecteur le permet."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "player",
+          "type": "select",
+          "source": "devices",
+          "required": true,
+          "label": { "en": "Player", "fr": "Lecteur" }
+        },
+        {
+          "key": "url",
+          "type": "string",
+          "required": true,
+          "label": { "en": "Audio address (http, https)", "fr": "Adresse audio (http, https)" },
+          "placeholder": {
+            "en": "http://192.168.1.10/chime.mp3",
+            "fr": "http://192.168.1.10/carillon.mp3"
+          }
+        },
+        {
+          "key": "volume",
+          "type": "number",
+          "required": false,
+          "min": 0,
+          "max": 100,
+          "label": { "en": "Volume (empty: unchanged)", "fr": "Volume (vide : inchangé)" }
+        },
+        {
+          "key": "resume",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "label": { "en": "Then resume", "fr": "Reprendre ensuite" }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "resumable",
+          "type": "boolean",
+          "label": {
+            "en": "What played before can resume",
+            "fr": "Ce qui jouait avant peut reprendre"
+          }
+        }
+      ]
+    },
+    {
+      "key": "group_add",
+      "label": {
+        "en": "BluOS player: join a group",
+        "fr": "Lecteur BluOS : rejoindre un groupe"
+      },
+      "description": {
+        "en": "Groups a player with another one, which leads the group (they then play the same music).",
+        "fr": "Groupe un lecteur avec un autre, qui mène le groupe (ils jouent alors la même musique)."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "player",
+          "type": "select",
+          "source": "devices",
+          "required": true,
+          "label": { "en": "Player to add", "fr": "Lecteur à ajouter" }
+        },
+        {
+          "key": "leader",
+          "type": "select",
+          "source": "devices",
+          "required": true,
+          "label": { "en": "Group of (primary player)", "fr": "Groupe de (lecteur principal)" }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "group_size",
+          "type": "number",
+          "label": { "en": "Players in the group", "fr": "Lecteurs dans le groupe" }
+        }
+      ]
+    },
+    {
+      "key": "group_remove",
+      "label": {
+        "en": "BluOS player: leave its group",
+        "fr": "Lecteur BluOS : quitter son groupe"
+      },
+      "description": {
+        "en": "Takes a player out of its group (a primary player leaves the others grouped together).",
+        "fr": "Sort un lecteur de son groupe (un lecteur principal laisse les autres groupés ensemble)."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "player",
+          "type": "select",
+          "source": "devices",
+          "required": true,
+          "label": { "en": "Player", "fr": "Lecteur" }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "was_grouped",
+          "type": "boolean",
+          "label": { "en": "It was in a group", "fr": "Il était dans un groupe" }
+        }
+      ]
+    },
+    {
+      "key": "get_now_playing",
+      "label": { "en": "BluOS player: now playing", "fr": "Lecteur BluOS : lecture en cours" },
+      "description": {
+        "en": "What a player plays, for a message or a condition that follows.",
+        "fr": "Ce que joue un lecteur, pour un message ou une condition qui suit."
+      },
+      "timeout_seconds": 20,
+      "fields": [
+        {
+          "key": "player",
+          "type": "select",
+          "source": "devices",
+          "required": true,
+          "label": { "en": "Player", "fr": "Lecteur" }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "online",
+          "type": "boolean",
+          "label": { "en": "The player answers", "fr": "Le lecteur répond" }
+        },
+        { "key": "playing", "type": "boolean", "label": { "en": "Playing", "fr": "En lecture" } },
+        {
+          "key": "state",
+          "type": "string",
+          "label": {
+            "en": "State (playing, paused, stopped)",
+            "fr": "État (playing, paused, stopped)"
+          }
+        },
+        { "key": "title", "type": "string", "label": { "en": "Title", "fr": "Titre" } },
+        { "key": "artist", "type": "string", "label": { "en": "Artist", "fr": "Artiste" } },
+        { "key": "album", "type": "string", "label": { "en": "Album", "fr": "Album" } },
+        {
+          "key": "summary",
+          "type": "string",
+          "label": { "en": "Now playing, one line", "fr": "Lecture en cours, une ligne" }
+        },
+        { "key": "source", "type": "string", "label": { "en": "Source", "fr": "Source" } },
+        {
+          "key": "kind",
+          "type": "string",
+          "label": {
+            "en": "Kind of source (input, preset, service)",
+            "fr": "Type de source (input, preset, service)"
+          }
+        },
+        { "key": "volume", "type": "number", "label": { "en": "Volume", "fr": "Volume" } },
+        { "key": "muted", "type": "boolean", "label": { "en": "Muted", "fr": "En sourdine" } },
+        { "key": "group", "type": "string", "label": { "en": "Group", "fr": "Groupe" } }
+      ]
     }
   ]
 }
