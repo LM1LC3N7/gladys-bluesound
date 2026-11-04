@@ -8,7 +8,7 @@ already taken and the next milestones.
 
 A Gladys Assistant **external integration** of type `device`: a Node.js
 service (Node 22+, ESM, no build step) in its own sandboxed Docker container,
-talking to Gladys through `@gladysassistant/integration-sdk` (v0.15), its
+talking to Gladys through `@gladysassistant/integration-sdk` (v0.16), its
 only runtime dependency (HTTP goes through `node:http`). It drives the
 players that work with BluOS (Bluesound, NAD…) through the BluOS Custom
 Integration API, plain HTTP + XML on port 11000 of the LAN: one device per
@@ -20,7 +20,7 @@ Unofficial: not affiliated with Lenbrook.
 
 ```bash
 npm install
-npm test                                  # node --test, the built-in runner
+npm test                                  # node --test --test-timeout=60000
 node --test test/app.test.js              # one file
 npm run lint                              # ESLint
 npm run format:check                      # Prettier, as the CI runs it
@@ -88,6 +88,12 @@ test/helpers/           a fake player (in memory or over loopback HTTP), fake
 
 ## Rules
 
+- **Features follow the core model.** Every feature has a numeric `min` and
+  `max` (0/0 for text), `read_only` and `has_feedback`: Gladys answers HTTP 422
+  otherwise, and the SDK's fake Gladys does not check it
+  (`test/helpers/coreFeature.js` does). Devices carry no `poll_frequency`, so
+  Gladys never polls them (5.3 polls a device with one unless it has
+  `should_poll: false`).
 - **Unofficial, and the API policy**: every user-facing surface says
   "unofficial connector, not affiliated with Lenbrook". Never use a
   Bluesound, NAD or BluOS logo; never put their marks in the integration

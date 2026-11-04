@@ -18,6 +18,7 @@ import {
   readingOf,
   sourceOptions,
 } from '../src/devices.js';
+import { assertCoreDevice } from './helpers/coreFeature.js';
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
 const presets = parsePresets(fixture('presets.xml')).presets;
@@ -143,4 +144,14 @@ test('an offline player only says it does not play', () => {
     { device_feature_external_id: 'd:playback_state', state: 0 },
   ]);
   assert.deepEqual(readingOf({ online: true }), { online: false, playback: null }, 'no status yet');
+});
+
+test('every feature has a numeric min and max and the other core fields', () => {
+  const gladys = createFakeGladys({ selector: 'bluos' });
+  const bare = { playerId: '9056820a0002-11000', host: '192.168.4.11', name: 'Node' };
+  let features = 0;
+  for (const p of [player, bare]) {
+    features += assertCoreDevice(buildPlayerDevice(gladys, p), p.name);
+  }
+  assert.equal(features, 2 * Object.keys(FEATURE).length);
 });

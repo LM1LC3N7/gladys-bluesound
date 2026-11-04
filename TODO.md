@@ -81,6 +81,14 @@ up to date at the end of every milestone.
 
 ## Decisions
 
+- **SDK `^0.16.0`** (2026-11-04, migration wave 8): it adds the ai, tts and
+  music types; no effect here (no `poll_frequency`: the devices are never
+  polled). Every feature already had a numeric `min` and `max` (text features
+  0/0); `test/helpers/coreFeature.js` now checks each one against the core
+  model. `coreFeature.js` accepts an empty `supported_options` on a text/select
+  feature: a player without inputs nor presets has an empty source select, which
+  the core accepts. `npm test` runs with `--test-timeout=60000`. `keywords`,
+  `countries` and `gladys_version >= 5.3.0` wait until Gladys 5.3 is widespread.
 - **Not a duplicate** (checked 2026-10-16): the Gladys core master
   (165e0d94, 2026-10-16, after 5.2.1) has `sonos`, `google-cast` and
   `airplay` but nothing for BluOS (`grep -ril 'bluos\|bluesound'` over

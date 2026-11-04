@@ -10,6 +10,12 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Changed
+
+- Integration SDK 0.16 (no change for the devices).
+- Development only: Prettier, and the GitHub Actions `setup-node` 7 and
+  `setup-qemu-action` 4 (Dependabot).
+
 ## [0.1.1] - 2026-10-16
 
 ### Added
